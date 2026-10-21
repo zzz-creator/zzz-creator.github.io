@@ -49,28 +49,51 @@ jobs:
       - name: Filter to repos with a GitHub Pages site
         run: |
           set -euo pipefail
-          jq --arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
-            {
-              generatedAt: $now,
-              source: "https://api.github.com/users/zzz-creator/repos",
-              projects: (
-                map(select(.has_pages == true and ((.name | endswith(".github.io")) | not)))
-                | map({
-                    name,
-                    description,
-                    url: (if ((.homepage // "") | length) == 0
-                          then "https://zzz-creator.github.io/\(.name)/"
-                          else .homepage end),
-                    html_url,
-                    language,
-                    stars: .stargazers_count,
-                    updated_at,
-                    fork
-                  })
-                | sort_by(.name | ascii_downcase)
-              )
-            }' raw-repos.json > projects.new.json
+          # Repo pins live in pins.json, which this step reads on every run:
+          # projects.json is regenerated wholesale, so a pin field written into
+          # it would be discarded at the next refresh.
+          [ -f pins.json ] || printf '{"pinned":[]}' > pins.json
+          jq -e '.pinned | type == "array"' pins.json > /dev/null \
+            || { echo "::error::pins.json must be {\"pinned\": [\"name\", ...]}"; exit 1; }
+
+          jq --arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --slurpfile pins pins.json '
+            ($pins[0].pinned // []) as $pinlist
+            | {
+                generatedAt: $now,
+                source: "https://api.github.com/users/zzz-creator/repos",
+                projects: (
+                  map(select(.has_pages == true and ((.name | endswith(".github.io")) | not)))
+                  | map(
+                      . as $p
+                      | ($pinlist | index($p.name)) as $at
+                      | {
+                          name: $p.name,
+                          description: $p.description,
+                          url: (if ((($p.homepage // "") | length) == 0)
+                                then "https://zzz-creator.github.io/\($p.name)/"
+                                else $p.homepage end),
+                          html_url: $p.html_url,
+                          language: $p.language,
+                          stars: $p.stargazers_count,
+                          updated_at: $p.updated_at,
+                          fork: $p.fork,
+                          pinned: ($at != null),
+                          position: ($at // -1)
+                        }
+                    )
+                  | sort_by(.name | ascii_downcase)
+                )
+              }' raw-repos.json > projects.new.json
           echo "projects: $(jq '.projects | length' projects.new.json)"
+          # A pin naming a repo that is missing or has no Pages site would be
+          # dropped from the output without a word, so report every pin that is
+          # absent from what was actually written.
+          jq -n -r --slurpfile pins pins.json --slurpfile out projects.new.json '
+            ([ $out[0].projects[].name ]) as $names
+            | ($pins[0].pinned // [])[]
+            | . as $pin
+            | select(($names | index($pin)) == null)
+            | "::warning::pins.json names \"\($pin)\", which is not in the published list"'
 
       - name: Commit and push if data changed
         run: |

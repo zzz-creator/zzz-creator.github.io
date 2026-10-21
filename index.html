@@ -14,6 +14,7 @@
     --muted: #8b949e;
     --accent: #58a6ff;
     --green: #3fb950;
+    --pin: #d29922;
   }
   * { box-sizing: border-box; }
   body {
@@ -87,6 +88,49 @@
     border-radius: 999px;
     color: var(--muted);
   }
+  .badge.pinned {
+    color: var(--pin);
+    border-color: var(--pin);
+  }
+  .pinbtn {
+    margin-left: auto;
+    font: inherit;
+    font-size: .78rem;
+    padding: .15rem .55rem;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pinbtn:hover { color: var(--pin); border-color: var(--pin); }
+  .pinbtn[aria-pressed="true"] { color: var(--pin); border-color: var(--pin); }
+  .section {
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, .015);
+  }
+  .section > h2 {
+    margin: 0 0 .85rem;
+    font-size: .95rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .section > h2 .n {
+    font-size: .8rem;
+    color: var(--muted);
+    opacity: .7;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .section .grid { margin: 0; }
   .status {
     padding: 2rem;
     text-align: center;
@@ -113,7 +157,7 @@
     <span id="count"></span>
   </div>
 
-  <main id="grid" class="grid" aria-live="polite">
+  <main id="grid" aria-live="polite">
     <div class="status">Loading projects…</div>
   </main>
 
@@ -130,6 +174,31 @@
   var count = document.getElementById("count");
   var footer = document.getElementById("footer");
 
+  var LS_KEY = "zzz-creator.pinned";
+
+  // Repo pins come from pins.json (merged into projects.json by the workflow).
+  // Local pins are per-browser and per-origin: they work on the live site but
+  // do not carry across to a file:// open of this page.
+  function readLocalPins() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.filter(function (n) { return typeof n === "string"; }) : [];
+    } catch (e) {
+      return []; // private mode or corrupt value: fall back to no local pins
+    }
+  }
+
+  function writeLocalPins(names) {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(names));
+    } catch (e) {
+      /* storage unavailable — pins simply do not persist */
+    }
+  }
+
+  var localPins = readLocalPins();
+
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -143,46 +212,96 @@
     });
   }
 
+  function cardHTML(p, isPinned) {
+    var desc = p.description
+      ? '<p class="desc">' + esc(p.description) + "</p>"
+      : '<p class="desc empty">No description</p>';
+    var lang = p.language
+      ? '<span class="lang">' + esc(p.language) + "</span>"
+      : "";
+    var stars = p.stars
+      ? "<span>★ " + p.stars + "</span>"
+      : "";
+    var fork = p.fork ? '<span class="badge">fork</span>' : "";
+    var updated = p.updated_at
+      ? "<span>Updated " + fmtDate(p.updated_at) + "</span>"
+      : "";
+    var badge = isPinned ? '<span class="badge pinned">pinned</span>' : "";
+    return '<article class="card">' +
+      '<h2><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + "</a></h2>" +
+      desc +
+      '<div class="meta">' + lang + stars + updated + fork + badge +
+      '<span><a href="' + esc(p.html_url) + '" target="_blank" rel="noopener" style="color:inherit">source ↗</a></span>' +
+      '<button type="button" class="pinbtn" data-pin="' + esc(p.name) + '" aria-pressed="' +
+        (localPins.indexOf(p.name) !== -1) + '" title="Pin on this browser">' +
+        (localPins.indexOf(p.name) !== -1 ? "unpin" : "pin") + "</button>" +
+      "</div></article>";
+  }
+
+  function sectionHTML(title, items, isPinned) {
+    if (!items.length) return "";
+    return '<section class="section">' +
+      "<h2>" + esc(title) + ' <span class="n">' + items.length + "</span></h2>" +
+      '<div class="grid">' + items.map(function (p) {
+        return cardHTML(p, isPinned);
+      }).join("") + "</div></section>";
+  }
+
   function render() {
     var q = search.value.trim().toLowerCase();
-    var visible = projects.filter(function (p) {
-      if (!q) return true;
-      return (p.name + " " + (p.description || "") + " " + (p.language || ""))
-        .toLowerCase().indexOf(q) !== -1;
-    });
 
-    count.textContent = visible.length === projects.length
-      ? projects.length + " projects"
-      : visible.length + " / " + projects.length + " projects";
-
-    if (!visible.length) {
-      grid.innerHTML = '<div class="status">No projects match “' + esc(search.value.trim()) + '”.</div>';
+    // Searching ignores sections: matching should never hide a project just
+    // because it sits in a section already shown further up the page.
+    if (q) {
+      var matches = projects.filter(function (p) {
+        return (p.name + " " + (p.description || "") + " " + (p.language || ""))
+          .toLowerCase().indexOf(q) !== -1;
+      });
+      count.textContent = matches.length + " / " + projects.length + " projects";
+      grid.innerHTML = matches.length
+        ? '<section class="section"><h2>Matches <span class="n">' + matches.length + "</span></h2>" +
+          '<div class="grid">' + matches.map(function (p) {
+            return cardHTML(p, isRepoPinned(p.name));
+          }).join("") + "</div></section>"
+        : '<div class="status">No projects match “' + esc(search.value.trim()) + '”.</div>';
       return;
     }
 
-    grid.innerHTML = visible.map(function (p) {
-      var desc = p.description
-        ? '<p class="desc">' + esc(p.description) + "</p>"
-        : '<p class="desc empty">No description</p>';
-      var lang = p.language
-        ? '<span class="lang">' + esc(p.language) + "</span>"
-        : "";
-      var stars = p.stars
-        ? "<span>★ " + p.stars + "</span>"
-        : "";
-      var fork = p.fork ? '<span class="badge">fork</span>' : "";
-      var updated = p.updated_at
-        ? "<span>Updated " + fmtDate(p.updated_at) + "</span>"
-        : "";
-      return '<article class="card">' +
-        '<h2><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + "</a></h2>" +
-        desc +
-        '<div class="meta">' + lang + stars + updated + fork +
-        '<span><a href="' + esc(p.html_url) + '" target="_blank" rel="noopener" style="color:inherit">source ↗</a></span>' +
-        "</div></article>";
-    }).join("");
+    var repoPinned = projects.filter(function (p) { return p.pinned; })
+      .sort(function (a, b) { return (a.position || 0) - (b.position || 0); });
+    var repoNamed = repoPinned.map(function (p) { return p.name; });
+    var minePinned = projects.filter(function (p) {
+      return localPins.indexOf(p.name) !== -1 && repoNamed.indexOf(p.name) === -1;
+    });
+    var rest = projects.filter(function (p) {
+      return repoNamed.indexOf(p.name) === -1 && localPins.indexOf(p.name) === -1;
+    });
+
+    grid.innerHTML =
+      sectionHTML("Pinned", repoPinned, true) +
+      sectionHTML("My pinned", minePinned, true) +
+      sectionHTML("All projects", rest, false);
+
+    count.textContent = projects.length + " projects";
   }
 
+  function isRepoPinned(name) {
+    return projects.some(function (p) { return p.name === name && p.pinned; });
+  }
+
+  grid.addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest(".pinbtn") : null;
+    if (!btn) return;
+    var name = btn.getAttribute("data-pin");
+    var i = localPins.indexOf(name);
+    if (i === -1) localPins.push(name);
+    else localPins.splice(i, 1);
+    writeLocalPins(localPins);
+    render();
+  });
+
+  // Repo pins are declared in pins.json and merged into projects.json by the
+  // daily workflow; a name there that matches no project is ignored.
   fetch("projects.json", { cache: "no-cache" })
     .then(function (res) {
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -195,7 +314,8 @@
       footer.innerHTML = "Data: " +
         '<a href="https://github.com/zzz-creator/zzz-creator.github.io">github.com/zzz-creator/zzz-creator.github.io</a>' +
         (when ? " · generated " + esc(when) : "") +
-        " · <a href='projects.json'>projects.json</a>";
+        " · <a href='projects.json'>projects.json</a>" +
+        " · <a href='pins.json'>pins.json</a>";
     })
     .catch(function (err) {
       grid.innerHTML = '<div class="status">Could not load projects.json (' +
