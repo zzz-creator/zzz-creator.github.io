@@ -1,0 +1,196 @@
+{
+  "generatedAt": "2026-10-21T02:29:35Z",
+  "source": "https://api.github.com/users/zzz-creator/repos",
+  "projects": [
+    {
+      "name": "audio-troubleshooting-lab",
+      "description": "Interactive mixing console training simulator for Audio University (lead magnet + member drip)",
+      "url": "https://zzz-creator.github.io/audio-troubleshooting-lab/",
+      "html_url": "https://github.com/zzz-creator/audio-troubleshooting-lab",
+      "language": "HTML",
+      "stars": 0,
+      "updated_at": "2026-10-21T02:18:34Z",
+      "fork": false
+    },
+    {
+      "name": "browser.js",
+      "description": "Highly Configurable Browser Environment for the Web",
+      "url": "https://zzz-creator.github.io/browser.js/",
+      "html_url": "https://github.com/zzz-creator/browser.js",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated_at": "2026-05-18T14:32:17Z",
+      "fork": true
+    },
+    {
+      "name": "ClickFix-Turnstile",
+      "description": "The basic scheme about phishing clickfix cloudflare turnstile. Educational purposes only!",
+      "url": "https://zzz-creator.github.io/ClickFix-Turnstile/",
+      "html_url": "https://github.com/zzz-creator/ClickFix-Turnstile",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-03-24T13:07:10Z",
+      "fork": true
+    },
+    {
+      "name": "face-api.js",
+      "description": "JavaScript API for face detection and face recognition in the browser and nodejs with tensorflow.js",
+      "url": "https://zzz-creator.github.io/face-api.js/",
+      "html_url": "https://github.com/zzz-creator/face-api.js",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2025-12-27T13:41:02Z",
+      "fork": true
+    },
+    {
+      "name": "fusliez-notes",
+      "description": "A companion notes app for Among Us social deduction game. Lets you track of your thoughts and your winning record, and includes a notepad and maps.",
+      "url": "https://zzz-creator.github.io/fusliez-notes/",
+      "html_url": "https://github.com/zzz-creator/fusliez-notes",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated_at": "2026-01-22T17:44:28Z",
+      "fork": true
+    },
+    {
+      "name": "jurassicsystems",
+      "description": "HTML5/JavaScript recreation of the original Jurassic Park movie computer system.",
+      "url": "http://www.jurassicsystems.com",
+      "html_url": "https://github.com/zzz-creator/jurassicsystems",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2026-07-12T19:32:59Z",
+      "fork": true
+    },
+    {
+      "name": "networksim",
+      "description": null,
+      "url": "https://zzz-creator.github.io/networksim/",
+      "html_url": "https://github.com/zzz-creator/networksim",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-10-14T20:48:55Z",
+      "fork": false
+    },
+    {
+      "name": "RAG",
+      "description": "Rail Announcements Generator; generates National Rail-style announcements. Audio from: https://github.com/zzz-creator/RAG-VOX-Roy",
+      "url": "https://zzz-creator.github.io/RAG/",
+      "html_url": "https://github.com/zzz-creator/RAG",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-07-29T19:30:44Z",
+      "fork": true
+    },
+    {
+      "name": "RAG-VOX-Roy",
+      "description": "Custom en-GB voice bank for the Rail Announcement Generator (https://github.com/zzz-creator/RAG)",
+      "url": "https://zzz-creator.github.io/RAG-VOX-Roy/",
+      "html_url": "https://github.com/zzz-creator/RAG-VOX-Roy",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2026-07-22T16:54:18Z",
+      "fork": true
+    },
+    {
+      "name": "recaptcha-phish",
+      "description": "Phishing with a fake reCAPTCHA",
+      "url": "https://zzz-creator.github.io/recaptcha-phish/",
+      "html_url": "https://github.com/zzz-creator/recaptcha-phish",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2026-03-24T12:54:17Z",
+      "fork": true
+    },
+    {
+      "name": "retro-bowl",
+      "description": null,
+      "url": "https://zzz-creator.github.io/retro-bowl/",
+      "html_url": "https://github.com/zzz-creator/retro-bowl",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2025-06-04T21:35:40Z",
+      "fork": true
+    },
+    {
+      "name": "rotr_f",
+      "description": null,
+      "url": "https://zzz-creator.github.io/rotr_f/",
+      "html_url": "https://github.com/zzz-creator/rotr_f",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-05-24T18:02:52Z",
+      "fork": false
+    },
+    {
+      "name": "sr_f",
+      "description": null,
+      "url": "https://zzz-creator.github.io/sr_f/",
+      "html_url": "https://github.com/zzz-creator/sr_f",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-05-18T15:29:17Z",
+      "fork": false
+    },
+    {
+      "name": "subway",
+      "description": "A subway planning game where everything's made up and the points don't matter!",
+      "url": "https://zzz-creator.github.io/subway/",
+      "html_url": "https://github.com/zzz-creator/subway",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-01-07T01:42:55Z",
+      "fork": true
+    },
+    {
+      "name": "survivalofthebestfit-group-engagement",
+      "description": "An interactive simulation to explain algorithmic bias.",
+      "url": "https://zzz-creator.github.io/survivalofthebestfit-group-engagement/",
+      "html_url": "https://github.com/zzz-creator/survivalofthebestfit-group-engagement",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2026-07-18T04:27:34Z",
+      "fork": true
+    },
+    {
+      "name": "TI84Calculator",
+      "description": "Free TI 84 Calculator Online",
+      "url": "https://zzz-creator.github.io/TI84Calculator/",
+      "html_url": "https://github.com/zzz-creator/TI84Calculator",
+      "language": null,
+      "stars": 0,
+      "updated_at": "2026-05-27T13:08:15Z",
+      "fork": true
+    },
+    {
+      "name": "torn-war-intel",
+      "description": null,
+      "url": "https://zzz-creator.github.io/torn-war-intel/",
+      "html_url": "https://github.com/zzz-creator/torn-war-intel",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-10-20T02:47:13Z",
+      "fork": false
+    },
+    {
+      "name": "turbowarp-packager",
+      "description": "Converts Scratch projects into HTML files, zip archives, or executable programs for Windows, macOS, and Linux.",
+      "url": "https://zzz-creator.github.io/turbowarp-packager/",
+      "html_url": "https://github.com/zzz-creator/turbowarp-packager",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-06-18T23:43:04Z",
+      "fork": true
+    },
+    {
+      "name": "webterm",
+      "description": "A fully-featured web-based terminal (for remote server access)",
+      "url": "https://zzz-creator.github.io/webterm/",
+      "html_url": "https://github.com/zzz-creator/webterm",
+      "language": "Python",
+      "stars": 0,
+      "updated_at": "2026-03-25T15:33:31Z",
+      "fork": true
+    }
+  ]
+}

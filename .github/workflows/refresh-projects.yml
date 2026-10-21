@@ -1,0 +1,93 @@
+name: Refresh projects
+
+on:
+  schedule:
+    # Daily 00:05 UTC — GitHub recommends avoiding the top of the hour,
+    # where scheduled runs are frequently delayed or starved.
+    - cron: "5 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Never let two refreshes race each other on main.
+concurrency:
+  group: refresh-projects
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch all public repos from the GitHub API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Pages are read/written as files, never passed as argv: a single
+          # API page exceeds the OS command-line argument size limit.
+          printf '[]' > all.json
+          page=1
+          while true; do
+            curl -fsS \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/users/zzz-creator/repos?per_page=100&page=$page" > page.json
+            n="$(jq 'length' page.json)"
+            if [ "$n" -eq 0 ]; then break; fi
+            jq -s '.[0] + .[1]' all.json page.json > all.next.json
+            mv all.next.json all.json
+            if [ "$n" -lt 100 ]; then break; fi
+            page=$((page + 1))
+          done
+          mv all.json raw-repos.json
+          rm -f page.json
+          echo "fetched $(jq 'length' raw-repos.json) repos on $page page(s)"
+
+      - name: Filter to repos with a GitHub Pages site
+        run: |
+          set -euo pipefail
+          jq --arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
+            {
+              generatedAt: $now,
+              source: "https://api.github.com/users/zzz-creator/repos",
+              projects: (
+                map(select(.has_pages == true and ((.name | endswith(".github.io")) | not)))
+                | map({
+                    name,
+                    description,
+                    url: (if ((.homepage // "") | length) == 0
+                          then "https://zzz-creator.github.io/\(.name)/"
+                          else .homepage end),
+                    html_url,
+                    language,
+                    stars: .stargazers_count,
+                    updated_at,
+                    fork
+                  })
+                | sort_by(.name | ascii_downcase)
+              )
+            }' raw-repos.json > projects.new.json
+          echo "projects: $(jq '.projects | length' projects.new.json)"
+
+      - name: Commit and push if data changed
+        run: |
+          set -euo pipefail
+          rm -f raw-repos.json
+          # Compare only the projects array (compact, canonical form) so a
+          # fresh generatedAt timestamp alone never triggers a commit.
+          old="$(jq -c '.projects' projects.json)"
+          new="$(jq -c '.projects' projects.new.json)"
+          if [ "$old" = "$new" ]; then
+            rm -f projects.new.json
+            echo "projects data unchanged — nothing to commit"
+            exit 0
+          fi
+          mv projects.new.json projects.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects.json
+          git commit -m "chore: refresh projects from the GitHub API"
+          git push
