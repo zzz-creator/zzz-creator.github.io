@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T12:58:41Z",
+  "generatedAt": "2026-10-22T04:31:35Z",
   "source": "https://api.github.com/users/zzz-creator/repos",
   "projects": [
     {
@@ -175,9 +175,9 @@
       "description": "An interactive simulation to explain algorithmic bias.",
       "url": "https://zzz-creator.github.io/survivalofthebestfit-group-engagement/",
       "html_url": "https://github.com/zzz-creator/survivalofthebestfit-group-engagement",
-      "language": null,
+      "language": "JavaScript",
       "stars": 0,
-      "updated_at": "2026-07-18T04:27:34Z",
+      "updated_at": "2026-10-21T18:38:54Z",
       "fork": true,
       "pinned": true,
       "position": 9
@@ -201,7 +201,7 @@
       "html_url": "https://github.com/zzz-creator/torn-war-intel",
       "language": "JavaScript",
       "stars": 0,
-      "updated_at": "2026-10-20T02:47:13Z",
+      "updated_at": "2026-10-22T02:38:47Z",
       "fork": false,
       "pinned": false,
       "position": -1
