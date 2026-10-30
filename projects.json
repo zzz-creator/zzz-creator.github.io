@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T05:36:28Z",
+  "generatedAt": "2026-10-30T05:35:40Z",
   "source": "https://api.github.com/users/zzz-creator/repos",
   "projects": [
     {
@@ -7,9 +7,9 @@
       "description": "Interactive mixing console training simulator for Audio University (lead magnet + member drip)",
       "url": "https://zzz-creator.github.io/audio-troubleshooting-lab/",
       "html_url": "https://github.com/zzz-creator/audio-troubleshooting-lab",
-      "language": "HTML",
+      "language": "JavaScript",
       "stars": 0,
-      "updated_at": "2026-10-25T22:17:28Z",
+      "updated_at": "2026-10-29T21:36:42Z",
       "fork": false,
       "pinned": true,
       "position": 0
@@ -201,7 +201,7 @@
       "html_url": "https://github.com/zzz-creator/torn-war-intel",
       "language": "JavaScript",
       "stars": 0,
-      "updated_at": "2026-10-29T03:41:30Z",
+      "updated_at": "2026-10-30T03:43:43Z",
       "fork": false,
       "pinned": false,
       "position": -1
