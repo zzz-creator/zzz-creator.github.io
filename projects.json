@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T07:00:08Z",
+  "generatedAt": "2026-11-17T22:33:44Z",
   "source": "https://api.github.com/users/zzz-creator/repos",
   "projects": [
     {
@@ -61,6 +61,18 @@
       "fork": true,
       "pinned": true,
       "position": 5
+    },
+    {
+      "name": "interactive-ebike-simulation",
+      "description": null,
+      "url": "https://zzz-creator.github.io/interactive-ebike-simulation/",
+      "html_url": "https://github.com/zzz-creator/interactive-ebike-simulation",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated_at": "2026-11-17T20:39:15Z",
+      "fork": false,
+      "pinned": false,
+      "position": -1
     },
     {
       "name": "jurassicsystems",
